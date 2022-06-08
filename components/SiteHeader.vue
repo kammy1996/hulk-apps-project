@@ -13,7 +13,7 @@
 
           <span class="cursor-pointer" @click="openCart">
             <b-icon icon="bag" scale="1.4"></b-icon>
-            <span class="cart-count badge-primary badge-pill">4</span>
+            <span class="cart-count badge-primary badge-pill">{{ cartCount }}</span>
           </span>
         </b-navbar-nav>
       </b-container>
@@ -25,12 +25,32 @@
 export default {
   name: "SiteHeader",
   data() {
-    return {};
+    return {
+      cartCount:0,
+    };
+  },
+  created()  {
+    this.$nuxt.$on("added-to-cart", () => {
+      this.getCartCount()
+    });
+    this.$nuxt.$on("removed-from-cart", () => {
+      this.getCartCount()
+    });
+  },
+  mounted()  {
+    this.getCartCount();
   },
   methods: {
     openCart() {
       $nuxt.$emit('toggle-cart')
     },
+    getCartCount()  {
+      let raw = window.localStorage.getItem("cart")
+      if(raw) { 
+        let parsed = JSON.parse(raw)
+        this.cartCount = parsed.length;
+      }
+    }
   },
 };
 </script>

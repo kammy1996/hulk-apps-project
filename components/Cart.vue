@@ -7,16 +7,22 @@
       width="450px"
       shadow
     >
-      <div class="empty-bag"></div>
+     
       <div class="cart-area">
         <p class="cart-title">
           <span class="cart-heading">Your Bag </span>
-          <span class="cart-items">(2 Items)</span>
+          <span class="cart-items">({{ cartCount   || 0 }}  Items)</span>
         </p>
 
-        <div class="product-preview">
+         <div class="empty-bag text-center" v-if="products && products.length <= 0" >
+            <div class="height-20"></div>
+            <b-img width="100%" src="../static/assets/images/empty-cart.png" ></b-img>
+            <div class="height-20"></div>
+            Your Bag is Empty
+        </div>
+        <div v-else class="product-preview mt-3" v-for="product in products" :key="product.id">
           <b-row>
-            <b-col cols="3">
+            <b-col cols="3"  >
               <b-img
                 class="preview-img"
                 width="100%"
@@ -25,7 +31,7 @@
             </b-col>
             <b-col cols="5">
               <div class="product-preview-info ml-2">
-                <span class="preview-title">Basic jumper for women</span><br />
+                <span class="preview-title">{{ product.title}}</span><br />
                 <span class="preview-color">Color: Green</span><br />
                 <div class="height-10"></div>
                 <b-input-group size="sm" class="quantity-input">
@@ -57,6 +63,7 @@
                     icon="trash"
                     class="cursor-pointer remove-icon"
                     scale="1"
+                    @click="removeFromCart(product.id)"
                     >X</b-icon
                   >
                 </p>
@@ -96,14 +103,40 @@ export default {
     return {
       isSidebar: true,
       quantity: 1,
+      products :[],
+      cartCount:0,
     };
   },
   created() {
     this.$nuxt.$on("toggle-cart", () => {
       this.isSidebar = true;
     });
+    this.$nuxt.$on("added-to-cart", () => {
+      this.getCartProducts()
+    });
+  },
+  mounted() { 
+    this.getCartProducts()
   },
   methods: {
+    getCartProducts() { 
+      let raw = window.localStorage.getItem("cart")
+      if(raw) { 
+        this.products = JSON.parse(raw)
+        this.cartCount = this.products.length;
+      }
+    },
+    removeFromCart(id) { 
+      let foundProduct = this.products.findIndex(product => product.id == id)
+      if(foundProduct >= 0) { 
+        this.products.splice(foundProduct,1)
+        this.cartCount = this.products.length;
+      }
+      
+      let stringed = JSON.stringify(this.products);
+      window.localStorage.setItem("cart",stringed)
+      $nuxt.$emit("removed-From-cart")
+    },
     increment() {
       this.quantity++;
     },
