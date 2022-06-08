@@ -21,10 +21,18 @@
             </b-carousel>
 
             <div class="cart-btn-area">
-              <b-button
+              <b-button class="mb-2"
                 ><b-icon class="mr-2" icon="bag" scale="0.8"></b-icon>Add to
                 Bag</b-button
               >
+
+               <div class="shoes-colors">
+                  <span class="blue active"></span>
+                  <span class="green"  ></span>
+                  <span class="yellow" ></span>
+                  <span class="rose" ></span>
+                  <span class="rose"  ></span>
+                </div>
             </div>
 
             <div class="height-10"></div>
@@ -48,7 +56,7 @@
 
 <script>
 export default {
-  name: "Products List",
+  name: "ProductsList",
   data() {
     return {};
   },
@@ -66,9 +74,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../static/assets/hover.css";
+
 .cart-btn-area {
   opacity: 0;
-  height: 50px;
+  height: 80px;
   background: white;
   position: absolute;
   width: 100%;
@@ -92,6 +102,27 @@ export default {
     width: 96%;
     text-transform: uppercase;
     box-shadow: none;
+  }
+
+  .shoes-colors{
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+  .shoes-colors span{
+    width: 14px;
+    background:green;
+    height: 14px;
+    margin: 0 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .shoes-colors .active { 
+    border:2px solid black;
+    padding:5px;
   }
 }
 
@@ -126,4 +157,7 @@ export default {
   opacity: 1;
   transition: 0.5s;
 }
+
+
+
 </style>
