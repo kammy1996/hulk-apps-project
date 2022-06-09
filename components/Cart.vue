@@ -101,7 +101,7 @@ export default {
   name: "Cart",
   data() {
     return {
-      isSidebar: true,
+      isSidebar: false,
       quantity: 1,
       products :[],
       cartCount:0,
@@ -135,7 +135,8 @@ export default {
       
       let stringed = JSON.stringify(this.products);
       window.localStorage.setItem("cart",stringed)
-      $nuxt.$emit("removed-From-cart")
+      $nuxt.$emit('removed-from-cart')
+     
     },
     increment() {
       this.quantity++;
