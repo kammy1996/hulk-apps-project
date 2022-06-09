@@ -1,3 +1,5 @@
+//selected Static products taken from products.js
+
 let products = [
   {
     id: 7096260427957,
