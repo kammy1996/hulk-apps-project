@@ -98,8 +98,6 @@ export default {
   },
   mounted() {
     this.setInitImageAndPrice();
-    fetch("https://drive.google.com/file/d/1OtxW9TrPEsDhKiTEWPDNLA4jYMjkZ2N2/view")
-    .then((res) => console.log(res))
   },
   computed: {},
   methods: {
