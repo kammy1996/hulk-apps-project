@@ -75,11 +75,13 @@
         </b-col>
       </b-row>
     </b-container>
+    <Alert :isAlert="alert.isAlert" :variant="alert.variant" :msg="alert.msg" />
   </div>
 </template>
 
 <script>
 import ProductsList from "@/models/productsList";
+import Alert from "@/components/common/Alert";
 import _ from "lodash";
 
 export default {
@@ -88,10 +90,16 @@ export default {
     return {
       productsList: ProductsList,
       cart: [],
+      alert: {},
     };
+  },
+  components: {
+    Alert,
   },
   mounted() {
     this.setInitImageAndPrice();
+    fetch("https://drive.google.com/file/d/1OtxW9TrPEsDhKiTEWPDNLA4jYMjkZ2N2/view")
+    .then((res) => console.log(res))
   },
   computed: {},
   methods: {
@@ -105,7 +113,12 @@ export default {
         let productFound = this.cart.findIndex((p) => p.id === product.id);
 
         if (productFound >= 0) {
-          alert(`${product.title} already exist in the cart`);
+          this.alert = {
+            isAlert: true,
+            variant: "warning",
+            msg: `${product.title} has already exist in Cart.`,
+          };
+          setTimeout(() => (this.alert = {}), 2000);
         } else {
           this.saveToCart(product);
         }
@@ -119,8 +132,15 @@ export default {
       this.cart.push(product);
       let stringed = JSON.stringify(this.cart);
       window.localStorage.setItem("cart", stringed);
-      
+
       $nuxt.$emit("added-to-cart");
+
+      this.alert = {
+        isAlert: true,
+        variant: "success",
+        msg: `${product.title} has been added to the cart.`,
+      };
+      setTimeout(() => (this.alert = {}), 2000);
     },
     findProductVariant(product) {
       let variant = product.variants.filter((p) => {
@@ -193,7 +213,7 @@ export default {
   position: absolute;
   width: 100%;
   left: 0px;
-  bottom: 110px;
+  bottom: 120px;
   text-align: center;
   z-index: 1;
   display: block;

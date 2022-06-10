@@ -1,5 +1,24 @@
 # hulkapps-project
 
+## TechStack Used
+- Vue.js
+- Nuxt.js
+- BootstrapVue
+- SCSS
+
+## Additional Dependencies 
+- Lodash 
+
+## Points to Inform
+- I Couldn't Fetch the API of product.js as the json is in google drive link, So I have created a local file of the products.
+- I am using localStorage to manage cart data.
+
+
+## My Experience of the project 
+- I Think the Variant functionality was quite Challenging as I have to get the user selected color and size to show the relevant variant on the fly and then adding the same to the cart.
+- I have almost covered all the functionality as required in the project 
+
+
 ## Build Setup
 
 ```bash
@@ -48,22 +67,5 @@ This directory contains your application views and routes. Nuxt will read all th
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
 
-### `plugins`
 
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
-
-### `static`
-
-This directory contains your static files. Each file inside this directory is mapped to `/`.
-
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
-
-### `store`
-
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).

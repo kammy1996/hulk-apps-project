@@ -4,9 +4,7 @@
       <div class="heading text-center">
         <h3 >Featured Collection</h3>
         <p>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s,
+          Some of our best collections.
         </p>
       </div>
       <div class="height-50"></div>
