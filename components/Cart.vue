@@ -29,8 +29,8 @@
           <div
             v-else
             class="product-preview mt-3"
-            v-for="product in products"
-            :key="product.id"
+            v-for="(product,index) in products"
+            :key="index"
           >
             <b-row>
               <b-col cols="3">
@@ -84,7 +84,7 @@
                       icon="trash"
                       class="cursor-pointer remove-icon"
                       scale="1"
-                      @click="removeFromCart(product.id)"
+                      @click="removeFromCart(index)"
                       >X</b-icon
                     >
                   </p>
@@ -202,18 +202,15 @@ export default {
         this.cartCount = this.products.length;
       }
     },
-    removeFromCart(id) {
-      let foundProduct = this.products.findIndex((product) => product.id == id);
-      if (foundProduct >= 0) {
-        this.alert = {
-          isAlert: true,
-          variant: "success",
-          msg: `${this.products[foundProduct].title} has been removed from cart.`,
-        };
-        setTimeout(() => (this.alert = {}), 2000);
-        this.products.splice(foundProduct, 1);
-        this.cartCount = this.products.length;
-      }
+    removeFromCart(index) {      
+      this.alert = {
+        isAlert: true,
+        variant: "success",
+        msg: `${this.products[index].title} has been removed from cart.`,
+      };
+      setTimeout(() => (this.alert = {}), 2000);
+      this.products.splice(index, 1);
+      this.cartCount = this.products.length;
 
       let stringed = JSON.stringify(this.products);
       window.localStorage.setItem("cart", stringed);

@@ -108,20 +108,41 @@ export default {
       if (raw) {
         parsed = JSON.parse(raw);
         this.cart = parsed;
-        let productFound = this.cart.findIndex((p) => p.id === product.id);
 
-        if (productFound >= 0) {
+        let sameVariantExist = this.checkProductVariant(product);
+
+        if(sameVariantExist) { 
           this.alert = {
             isAlert: true,
             variant: "warning",
-            msg: `${product.title} has already exist in Cart.`,
+            msg: `${product.title} with the same variant already exist in Cart.`,
           };
           setTimeout(() => (this.alert = {}), 2000);
         } else {
+          console.log(`variant not found`);
           this.saveToCart(product);
         }
       } else {
         this.saveToCart(product);
+      }
+    },
+    checkProductVariant(product) { 
+      let raw = window.localStorage.getItem("cart")
+      if(!raw) return false;
+      let productsInCart = JSON.parse(raw);
+      if(productsInCart && productsInCart.length > 0) { 
+        let result;
+        productsInCart.map(p => { 
+          if(result) return;
+          if(product.id == p.id) { 
+            if(p.selected_color == product.selected_color && p.selected_size == product.selected_size) {
+              result = true;
+            } else { 
+              result = false;
+            }
+          }
+        })
+        return result;
       }
     },
     saveToCart(product) {
