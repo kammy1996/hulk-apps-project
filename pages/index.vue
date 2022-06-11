@@ -15,6 +15,7 @@
       <template class="shopping-cart" >
         <Cart />
       </template>
+      <div class="height-100"></div>
   </div>
 </template>
 

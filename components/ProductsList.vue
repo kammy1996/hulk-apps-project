@@ -1,79 +1,56 @@
 <template>
   <div>
     <b-container>
-      <b-row>
-        <b-col lg="3" v-for="product in productsList" :key="product.id">
+      <b-row >
+        <b-col lg="3" class="mb-4"  v-for="product in productsList" :key="product.id">
           <div class="product-box">
             <!-- figure out a way that you can run the carousel only when you hover on it -->
-            <img width="100%" :src="product.current_image" alt="" />
-            <div class="cart-btn-area">
-              <div>
-                <b-tabs
-                  class="product-attrs"
-                  v-model="product.attr_step"
-                  small
-                  fill
-                  content-class="mt-3"
-                  align="center"
-                >
-                  <b-tab class="product-attr-title" title="color" active
-                    ><div class="product-colors">
-                      <span
-                        :style="{ background: color }"
-                        :class="
-                          product.selected_color == color ? 'color-active' : ''
-                        "
-                        v-for="color in product.options[0].values"
-                        :key="color.id"
-                        @click="attachColor(product.id, color)"
-                      ></span></div
-                  ></b-tab>
-                  <b-tab
-                    class="product-attr-title"
-                    title="Size"
-                    :disabled="!product.is_color_selected"
-                  >
-                    <div class="product-sizes" v-if="product.options[1]">
-                      <span
-                        class="cursor-pointer"
-                        :class="
-                          product.selected_size == size ? 'size-active' : ''
-                        "
-                        v-for="(size, index) in product.options[1] &&
-                        product.options[1].values"
-                        :key="index"
-                        @click="attachSize(product.id, size)"
-                        >{{ size }}
-                      </span>
-                    </div>
-                    <div v-else>No size available</div>
-                  </b-tab>
-                </b-tabs>
-                <div class="height-20"></div>
-                <b-button
-                  class="mb-2"
-                  v-if="product.selected_color && product.selected_size"
-                  @click="addToCart(product)"
-                  ><b-icon class="mr-2" icon="bag" scale="0.8"></b-icon>Add to
-                  Bag</b-button
-                >
-              </div>
-            </div>
+            <img
+              width="100%"
+              class="product-image"
+              :src="product.current_image"
+              alt=""
+            />
 
             <div class="height-10"></div>
-
-            <span class="product-title">{{ product.title }} </span>
-            <span class="wishlist-icon cursor-pointer"
-              ><b-icon icon="heart" scale="1.2"></b-icon
-            ></span>
-            <span class="product-desc"
-              >Captivate with this shirt’s versatile urban look that works as
-              well at happy hour as it does in the back yard
-            </span>
-            <p class="product-price">$ {{ product.current_price }}</p>
+            <b-row no-gutters class="mb-n2">
+              <b-col cols="8">
+                <p class="product-title">
+                  {{ product.title }}
+                </p>
+              </b-col>
+              <b-col cols="4">
+                <p class="product-price">$ {{ product.current_price }}</p>
+              </b-col>
+            </b-row>
+            <div class="product-colors mb-3">
+              <span
+                :style="[product.selected_color == color ? setActive(color) : {background: color}]"
+                v-for="color in product.options[0].values"
+                :key="color.id"
+                @click="attachColor(product.id, color)"
+              ></span>
+            </div>
           </div>
+          <div class="product-sizes mb-3" v-if="product.options[1]">
+            <span
+              class="cursor-pointer"
+              :class="product.selected_size == size ? 'size-active' : ''"
+              v-for="(size, index) in product.options[1] &&
+              product.options[1].values"
+              :key="index"
+              @click="attachSize(product.id, size)"
+              >{{ size }}
+            </span>
+          </div>
+          <div v-else class="mb-3" >Size not available</div>
+          <b-button class="mb-2 add-to-bag" @click="addToCart(product)"
+            ><b-icon class="mr-2" icon="bag" scale="0.8"></b-icon>Add to
+            Bag</b-button
+          >
         </b-col>
-      </b-row>
+      </b-row>  
+
     </b-container>
     <Alert :isAlert="alert.isAlert" :variant="alert.variant" :msg="alert.msg" />
   </div>
@@ -101,8 +78,26 @@ export default {
   },
   computed: {},
   methods: {
+    setActive(color) { 
+      return { 
+        border:`4px solid ${color}`,
+        'outline-style': 'solid',
+        'outline-width': '1px',
+        'outline-color':'black'
+      }
+    },
     showImageAsPerColor() {},
     addToCart(product) {
+      let isColorSizeTaken = this.isColorSizeTaken(product);
+      if(!isColorSizeTaken) { 
+        this.alert = {
+          isAlert: true,
+          variant: "warning",
+          msg: `Please Select Color and Size of ${product.title}`,
+        };
+        setTimeout(() => (this.alert = {}), 2000);
+        return;
+      }
       let raw = window.localStorage.getItem("cart");
       let parsed;
       if (raw) {
@@ -111,7 +106,7 @@ export default {
 
         let sameVariantExist = this.checkProductVariant(product);
 
-        if(sameVariantExist) { 
+        if (sameVariantExist) {
           this.alert = {
             isAlert: true,
             variant: "warning",
@@ -126,22 +121,29 @@ export default {
         this.saveToCart(product);
       }
     },
-    checkProductVariant(product) { 
-      let raw = window.localStorage.getItem("cart")
-      if(!raw) return false;
+    isColorSizeTaken(product) { 
+      if(product.selected_color && product.selected_size) return true;
+      else return false;
+    },
+    checkProductVariant(product) {
+      let raw = window.localStorage.getItem("cart");
+      if (!raw) return false;
       let productsInCart = JSON.parse(raw);
-      if(productsInCart && productsInCart.length > 0) { 
+      if (productsInCart && productsInCart.length > 0) {
         let result;
-        productsInCart.map(p => { 
-          if(result) return;
-          if(product.id == p.id) { 
-            if(p.selected_color == product.selected_color && p.selected_size == product.selected_size) {
+        productsInCart.map((p) => {
+          if (result) return;
+          if (product.id == p.id) {
+            if (
+              p.selected_color == product.selected_color &&
+              p.selected_size == product.selected_size
+            ) {
               result = true;
-            } else { 
+            } else {
               result = false;
             }
           }
-        })
+        });
         return result;
       }
     },
@@ -226,65 +228,61 @@ export default {
 @import "../static/assets/hover.css";
 @import "../static/assets/main.scss";
 
-.cart-btn-area {
-  opacity: 0;
-  background: white;
-  position: absolute;
+.product-image {
   width: 100%;
-  left: 0px;
-  bottom: 120px;
+  height: 280px;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.add-to-bag {
+  background: transparent;
+  border: 1px solid black;
+  color: black;
+  border-radius: 0px;
+  font-size: 15px;
   text-align: center;
-  z-index: 1;
   display: block;
-  margin: auto;
-  padding: 10px;
+  margin-left: 5px;
+  width: 96%;
+  text-transform: uppercase;
+  box-shadow: none;
+}
 
-  button {
-    background: transparent;
-    border: 1px solid black;
-    color: black;
-    border-radius: 0px;
-    font-size: 15px;
-    text-align: center;
-    display: block;
-    margin-left: 5px;
-    width: 96%;
-    text-transform: uppercase;
-    box-shadow: none;
+.product-colors {
+  display: flex;
+}
+
+.product-colors {
+  width: 100%;
+  span {
+    width: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    height: 18px;
+    margin: 0 7px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
   }
 
-  .product-colors {
-    display: flex;
-    justify-content: center;
+  .color-active {
+    border: 5px solid black;
+    transition: 0.3s;
   }
+}
 
-  .product-colors {
-    width: 100%;
-    span {
-      width: 20px;
-      border: 1px solid rgba(0, 0, 0, 1);
-      height: 20px;
-      margin: 0 7px;
-      cursor: pointer;
-      padding: 5px;
-    }
+.product-sizes {
+  width: 100%;
 
-    .color-active {
-      border: 3px solid black;
-    }
-  }
-
-  .product-sizes {
-    width: 100%;
-
-    span {
-      border: 1px solid rgba(0, 0, 0, 0.5);
-      margin: 5px;
-      width: 20px;
-      font-size: 13px;
-      cursor: pointer;
-      padding: 5px 7px;
-    }
+  span {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    margin: 5px;
+    width: 20px;
+    height: 20px;
+    font-size: 1.7vh;
+    cursor: pointer;
+    padding: 3px 7px;
+    display:inline;
   }
 
   .size-active {
@@ -297,27 +295,13 @@ export default {
 .product-box {
   .product-title {
     font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
+    font-weight: 500;
   }
 
   .product-price {
-    font-size: 18px;
-    font-weight: 700;
-  }
-
-  .wishlist-icon {
+    font-size: 16px;
+    font-weight: 500;
     float: right;
-  }
-
-  .product-desc {
-    width: 200px;
-    overflow: hidden;
-    display: inline-block;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 13px;
-    color: grey;
   }
 }
 

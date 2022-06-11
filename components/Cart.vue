@@ -254,7 +254,9 @@ export default {
   }
 
   .quantity-btn {
-    padding: 0px 10px;
+    padding: 0px 8px;
+    height:25px;
+    box-sizing:border-box;
     background: rgba(0, 0, 0, 0.1);
     border: none;
     border-radius: 100px;
@@ -264,7 +266,8 @@ export default {
   }
 
   .quantity-input {
-    width: 110px;
+    margin-top:-3px;
+    width: 100px;
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -274,6 +277,7 @@ export default {
       background: transparent;
       border: none;
       padding: 0px 30px;
+      margin-top:-2px;
     }
 
     .input-box:focus {
